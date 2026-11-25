@@ -1,7 +1,8 @@
-const { db } = require("../config/firebase");
+import { db } from "../config/firebase.js";
 const collection = db.collection("items");
 
-const getImageValue = (body) => body.imageBase64 || body.image || body.photo || null;
+const getImageValue = (body) =>
+  body.imageBase64 || body.image || body.photo || null;
 
 const uploadToImgbb = async (image) => {
   const apiKey = process.env.IMGBB_API_KEY;
@@ -26,19 +27,21 @@ const uploadToImgbb = async (image) => {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: form,
-    }
+    },
   );
 
   const result = await response.json();
 
   if (!response.ok || !result.success) {
-    throw new Error(result.error?.message || "No se pudo cargar la imagen en ImgBB");
+    throw new Error(
+      result.error?.message || "No se pudo cargar la imagen en ImgBB",
+    );
   }
 
   return result.data.url;
 };
 
-const getItems = async (req, res) => {
+export const getItems = async (req, res) => {
   try {
     const querySnapshot = await collection.get();
     const items = querySnapshot.docs.map((doc) => ({
@@ -53,7 +56,7 @@ const getItems = async (req, res) => {
   }
 };
 
-const createItems = async (req, res) => {
+export const createItems = async (req, res) => {
   try {
     const image = getImageValue(req.body);
     const imageUrl = await uploadToImgbb(image);
@@ -85,5 +88,3 @@ const createItems = async (req, res) => {
     });
   }
 };
-
-module.exports = { getItems, createItems };

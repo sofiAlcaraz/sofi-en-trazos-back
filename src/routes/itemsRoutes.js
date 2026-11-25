@@ -1,8 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const { getItems, createItems } = require("../controllers/itemsController");
+import express from "express";
+import { getItems, createItems } from "../controllers/itemsController.js";
+import { requireAdmin } from "../middleware/requireAdmin.js";
+export const itemsRoutes = express.Router();
 
-router.get("/", getItems);
-router.post("/create", createItems);
-
-module.exports = router;
+itemsRoutes.get("/", getItems);
+itemsRoutes.post("/create", requireAdmin, createItems);
